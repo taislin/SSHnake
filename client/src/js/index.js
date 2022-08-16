@@ -2,11 +2,6 @@
 import { io } from "socket.io-client";
 import { Terminal } from "xterm";
 import { FitAddon } from "xterm-addon-fit";
-import { library, dom } from "@fortawesome/fontawesome-svg-core";
-import { faBars, faClipboard, faDownload, faKey, faCog } from "@fortawesome/free-solid-svg-icons";
-
-library.add(faBars, faClipboard, faDownload, faKey, faCog);
-dom.watch();
 
 const debug = require("debug")("SSHnake");
 require("xterm/css/xterm.css");
@@ -41,7 +36,7 @@ term.focus();
 fitAddon.fit();
 
 const socket = io({
-	path: "/ssh/socket.io",
+	path: "/socket.io",
 });
 
 // reauthenticate
@@ -49,7 +44,7 @@ function reauthSession() {
 	// eslint-disable-line
 	debug("re-authenticating");
 	socket.emit("control", "reauth");
-	window.location.href = "/ssh/reauth";
+	window.location.href = "/reauth";
 	return false;
 }
 

@@ -128,4 +128,5 @@ dist
 
 config.json
 SSHnake.code-workspace
-public/
+client/public/
+stats.json
