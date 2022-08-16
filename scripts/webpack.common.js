@@ -7,16 +7,15 @@ const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 module.exports = {
 	context: path.resolve("__dirname", "../"),
 	resolve: {
-		// Add '.ts' and '.tsx' as resolvable extensions.
-		extensions: ["", ".webpack.js", ".web.js", ".ts", ".tsx", ".js"],
+		extensions: ["", ".webpack.js", ".web.js", ".js"],
 	},
 	entry: {
-		webssh2: "./client/src/js/index.ts",
+		sshnake: "./client/src/js/index.js",
 	},
 	plugins: [
 		new CleanWebpackPlugin(),
 		new CopyWebpackPlugin({
-			patterns: ["./client/src/client.htm", "./client/src/favicon.ico"],
+			patterns: ["./client/src/client.html", "./client/src/favicon.ico"],
 		}),
 		new MiniCssExtractPlugin(),
 	],

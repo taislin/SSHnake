@@ -2,7 +2,7 @@
    no-console: ["error", { allow: ["warn", "error", "info"] }] */
 const fs = require("fs");
 const path = require("path");
-const debugWebSSH2 = require("debug")("WebSSH2");
+const debugSSHnake = require("debug")("SSHnake");
 const crypto = require("crypto");
 const util = require("util");
 
@@ -23,7 +23,7 @@ const configDefault = {
 	},
 	express: {
 		secret: crypto.randomBytes(20).toString("hex"),
-		name: "WebSSH2",
+		name: "SSHnake",
 		resave: true,
 		saveUninitialized: false,
 		unset: "destroy",
@@ -101,14 +101,14 @@ const configDefault = {
 // test if config.json exists, if not provide error message but try to run anyway
 try {
 	if (!fs.existsSync(configPath)) {
-		console.error(`\n\nERROR: Missing config.json for WebSSH2. Current config: ${util.inspect(myConfig)}`);
+		console.error(`\n\nERROR: Missing config.json for SSHnake. Current config: ${util.inspect(myConfig)}`);
 		console.error("\n  See config.json.sample for details\n\n");
 	}
 	myConfig = configDefault;
-	debugWebSSH2(`\nCurrent config: ${util.inspect(myConfig)}`);
+	debugSSHnake(`\nCurrent config: ${util.inspect(myConfig)}`);
 } catch (err) {
 	myConfig = configDefault;
-	console.error(`\n\nERROR: Missing config.json for WebSSH2. Current config: ${util.inspect(myConfig)}`);
+	console.error(`\n\nERROR: Missing config.json for SSHnake. Current config: ${util.inspect(myConfig)}`);
 	console.error("\n  See config.json.sample for details\n\n");
 	console.error(`ERROR:\n\n  ${err}`);
 }

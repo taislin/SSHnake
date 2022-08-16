@@ -4,8 +4,8 @@
 // logging.js
 // private
 
-const debug = require('debug');
-const util = require('util');
+const debug = require("debug");
+const util = require("util");
 
 /**
  * generate consistent prefix for log messages
@@ -13,12 +13,12 @@ const util = require('util');
  * @param {object} socket Socket information
  */
 function prefix(socket) {
-  return `(${socket.request.sessionID}/${socket.id})`;
+	return `(${socket.request.sessionID}/${socket.id})`;
 }
 
 // public
-function webssh2debug(socket, msg) {
-  debug('WebSSH2')(`${prefix(socket)} ${msg}`);
+function sshnakedebug(socket, msg) {
+	debug("SSHnake")(`${prefix(socket)} ${msg}`);
 }
 
 /**
@@ -27,7 +27,7 @@ function webssh2debug(socket, msg) {
  * @param {object} msg    log message
  */
 function auditLog(socket, msg) {
-  console.info(`WebSSH2 ${prefix(socket)} AUDIT: ${msg}`);
+	console.info(`SSHnake ${prefix(socket)} AUDIT: ${msg}`);
 }
 
 /**
@@ -38,10 +38,10 @@ function auditLog(socket, msg) {
  * @param {object} err    error object or error message
  */
 function logError(socket, myFunc, err) {
-  console.error(`WebSSH2 ${prefix(socket)} ERROR: ${myFunc}: ${err}`);
-  webssh2debug(socket, `logError: ${myFunc}: ${util.inspect(err)}`);
-  if (!socket.request.session) return;
-  socket.emit('ssherror', `SSH ${myFunc}: ${err}`);
+	console.error(`SSHnake ${prefix(socket)} ERROR: ${myFunc}: ${err}`);
+	sshnakedebug(socket, `logError: ${myFunc}: ${util.inspect(err)}`);
+	if (!socket.request.session) return;
+	socket.emit("ssherror", `SSH ${myFunc}: ${err}`);
 }
 
-module.exports = { logError, auditLog, webssh2debug };
+module.exports = { logError, auditLog, sshnakedebug };
