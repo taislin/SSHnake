@@ -98,20 +98,6 @@ const configDefault = {
 	safeShutdownDuration: 300,
 };
 
-// test if config.json exists, if not provide error message but try to run anyway
-try {
-	if (!fs.existsSync(configPath)) {
-		console.error(`\n\nERROR: Missing config.json for SSHnake. Current config: ${util.inspect(myConfig)}`);
-		console.error("\n  See config.json.sample for details\n\n");
-	}
-	myConfig = configDefault;
-	debugSSHnake(`\nCurrent config: ${util.inspect(myConfig)}`);
-} catch (err) {
-	myConfig = configDefault;
-	console.error(`\n\nERROR: Missing config.json for SSHnake. Current config: ${util.inspect(myConfig)}`);
-	console.error("\n  See config.json.sample for details\n\n");
-	console.error(`ERROR:\n\n  ${err}`);
-}
 const config = myConfig;
 
 if (process.env.LISTEN) config.listen.ip = process.env.LISTEN;
