@@ -36,7 +36,7 @@ term.focus();
 fitAddon.fit();
 
 const socket = io({
-	path: "/socket.io",
+	path: "/ssh/socket.io",
 });
 
 // reauthenticate
@@ -44,7 +44,7 @@ function reauthSession() {
 	// eslint-disable-line
 	debug("re-authenticating");
 	socket.emit("control", "reauth");
-	window.location.href = "/reauth";
+	window.location.href = "/ssh/reauth";
 	return false;
 }
 

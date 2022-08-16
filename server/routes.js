@@ -25,7 +25,7 @@ exports.reauth = function reauth(req, res) {
 };
 
 exports.connect = function connect(req, res) {
-	res.sendFile(path.join(path.join(publicPath, "client.htm")));
+	res.sendFile(path.join(path.join(publicPath, "client.html")));
 
 	let { host, port } = config.ssh;
 	let { text: header, background: headerBackground } = config.header;
