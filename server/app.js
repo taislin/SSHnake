@@ -8,7 +8,8 @@ const config = require("./config");
 const path = require("path");
 
 const nodeRoot = path.dirname(require.main.filename);
-const publicPath = path.join("./", "client", "public");
+console.log(nodeRoot);
+const publicPath = path.join(nodeRoot, "client", "public");
 
 const express = require("express");
 const logger = require("morgan");
