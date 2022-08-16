@@ -15,7 +15,7 @@ module.exports = {
 	plugins: [
 		new CleanWebpackPlugin(),
 		new CopyWebpackPlugin({
-			patterns: ["./client/src/client.html", "./client/src/favicon.ico"],
+			patterns: ["./client/src/login.html", "./client/src/client.html", "./client/src/favicon.ico"],
 		}),
 		new MiniCssExtractPlugin(),
 	],
