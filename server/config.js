@@ -1,15 +1,12 @@
 /* eslint no-unused-expressions: ["error", { "allowShortCircuit": true, "allowTernary": true }],
    no-console: ["error", { allow: ["warn", "error", "info"] }] */
-const fs = require("fs");
 const path = require("path");
 const debugSSHnake = require("debug")("SSHnake");
 const crypto = require("crypto");
 const util = require("util");
 
 const nodeRoot = path.dirname(require.main.filename);
-const configPath = path.join(nodeRoot, "config.json");
 
-let myConfig;
 // establish defaults
 const configDefault = {
 	listen: {
@@ -98,7 +95,10 @@ const configDefault = {
 	safeShutdownDuration: 300,
 };
 
-const config = myConfig;
+// test if config.json exists, if not provide error message but try to run anyway
+debugSSHnake(`\nCurrent config: ${util.inspect(configDefault)}`);
+
+const config = configDefault;
 
 if (process.env.LISTEN) config.listen.ip = process.env.LISTEN;
 
