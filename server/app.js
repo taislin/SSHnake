@@ -50,7 +50,6 @@ app.use(basicAuth);
 app.get("/ssh/reauth", reauth);
 app.get("/ssh/host/:host?", connect);
 app.post("/submit", (req, res) => {
-	console.log(req);
 	connect(req, res, req.body.host, req.body.username, req.body.userpassword);
 });
 app.get("/", (req, res) => {

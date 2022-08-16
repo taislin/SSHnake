@@ -62,7 +62,6 @@ exports.connect = function connect(req, res, _host = null, _user = null, _passwo
 
 		if (req.body.headerBackground) {
 			headerBackground = req.body.headerBackground;
-			console.log(`background: ${req.body.headerBackground}`);
 		}
 
 		if (req.body.sshterm && /^(([a-z]|[A-Z]|\d|[!^(){}\-_~])+)?\w$/.test(req.body.sshterm)) sshterm = req.body.sshterm;
