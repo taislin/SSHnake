@@ -1,38 +1,38 @@
 <head>
 <title>Login</title>
-    <link rel="stylesheet" href="/ssh/sshnake.css" />
     <link rel="icon" href="/ssh/favicon.ico" />
-    <script>  var socket = io();
-
-        var form = document.getElementById('form');
-        var input = document.getElementById('input');
-      
-        form.addEventListener('submit', function(e) {
-          e.preventDefault();
-          if (input.value) {
-            socket.emit('chat message', input.value);
-            input.value = '';
-          }
-        });</script>
+    <style>
+    h1 {padding: 10px;
+    color:darkgreen;
+    margin-block-start: 0;
+    margin-block-end: 0;
+    margin-inline-start: 0px;
+    margin-inline-end: 0px;}
+    body {background-color: black; color: white; text-align: center; font-size: 1.25em; font-family: 'Courier New', Courier, monospace;}
+    input {background-color: darkgray; font-size: 2em}
+    input:-internal-autofill-selected {background-color: darkgray;}
+    label {font-size: 2em;}
+    button {font-size: 2em;border-radius: 12px;}
+    </style>
 </head>
 <html>
 <body>
-    <h1>SSHnake</h1>
-    <p>Please input the server, username and password below.</p>
+    <h1 style="font-size: 4em;">SSHnake</h1>
+    <div style="font-size: 5em;">🐍</div>
     <form method="POST" action="/submit">
         <p>
-            <label for="host">Server</label>
+            <label for="host">Server</label><br>
             <input name="host">
         </p>
         <p>
-            <label for="username">Username</label>
+            <label for="username">Username</label><br>
             <input name="username">
         </p>
         <p>
-            <label for="userpassword">Password</label>
+            <label for="userpassword">Password</label><br>
             <input name="userpassword" type="password">
         </p>
-        <input type="submit" value="Login"></input>
+        <button type="submit" value="Login">Login</button>
     </form>
 </body>
 </html>
