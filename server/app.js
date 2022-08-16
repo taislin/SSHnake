@@ -9,6 +9,7 @@ const path = require("path");
 
 const nodeRoot = path.dirname(require.main.filename);
 const publicPath = path.join(nodeRoot, "client", "public");
+
 const express = require("express");
 const logger = require("morgan");
 
@@ -48,9 +49,18 @@ app.use("/ssh", express.static(publicPath, config.express.ssh));
 app.use(basicAuth);
 app.get("/ssh/reauth", reauth);
 app.get("/ssh/host/:host?", connect);
+app.post("/submit", (req, res) => {
+	console.log(req);
+	connect(req, res, req.body.host, req.body.username, req.body.userpassword);
+});
+app.get("/", (req, res) => {
+	res.sendFile(path.join(path.join(publicPath, "login.html")));
+});
+app.get("/login", (req, res) => {
+	res.sendFile(path.join(path.join(publicPath, "login.html")));
+});
 app.use(notfound);
 app.use(handleErrors);
-
 // clean stop
 function stopApp(reason) {
 	shutdownMode = false;

@@ -1,0 +1,38 @@
+<head>
+<title>Login</title>
+    <link rel="stylesheet" href="/ssh/sshnake.css" />
+    <link rel="icon" href="/ssh/favicon.ico" />
+    <script>  var socket = io();
+
+        var form = document.getElementById('form');
+        var input = document.getElementById('input');
+      
+        form.addEventListener('submit', function(e) {
+          e.preventDefault();
+          if (input.value) {
+            socket.emit('chat message', input.value);
+            input.value = '';
+          }
+        });</script>
+</head>
+<html>
+<body>
+    <h1>SSHnake</h1>
+    <p>Please input the server, username and password below.</p>
+    <form method="POST" action="/submit">
+        <p>
+            <label for="host">Server</label>
+            <input name="host">
+        </p>
+        <p>
+            <label for="username">Username</label>
+            <input name="username">
+        </p>
+        <p>
+            <label for="userpassword">Password</label>
+            <input name="userpassword" type="password">
+        </p>
+        <input type="submit" value="Login"></input>
+    </form>
+</body>
+</html>
