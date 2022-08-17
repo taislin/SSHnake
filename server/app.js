@@ -1,9 +1,4 @@
-/* jshint esversion: 6, asi: true, node: true */
-/* eslint no-unused-expressions: ["error", { "allowShortCircuit": true, "allowTernary": true }],
-   no-console: ["error", { allow: ["warn", "error", "info"] }] */
-// app.js
 
-// eslint-disable-next-line import/order
 const config = require("./config");
 const path = require("path");
 
@@ -21,7 +16,7 @@ const io = require("socket.io")(server, config.socketio);
 const session = require("express-session")(config.express);
 
 const appSocket = require("./socket");
-const { setDefaultCredentials, basicAuth } = require("./util");
+const { setDefaultCredentials } = require("./util");
 const { sshnakedebug } = require("./logging");
 const { reauth, connect, notfound, handleErrors } = require("./routes");
 
@@ -47,7 +42,6 @@ app.use(express.urlencoded({ extended: true }));
 app.post("/ssh/host/:host?", connect);
 app.post("/ssh", express.static(publicPath, config.express.ssh));
 app.use("/ssh", express.static(publicPath, config.express.ssh));
-app.use(basicAuth);
 app.get("/ssh/reauth", reauth);
 app.get("/ssh/host/:host?", connect);
 app.post("/submit", (req, res) => {
