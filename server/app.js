@@ -1,4 +1,3 @@
-
 const config = require("./config");
 const path = require("path");
 
@@ -17,7 +16,7 @@ const session = require("express-session")(config.express);
 const appSocket = require("./socket");
 const { setDefaultCredentials } = require("./util");
 const { sshnakedebug } = require("./logging");
-const { reauth, connect, notfound, handleErrors } = require("./routes");
+const { connect, notfound, handleErrors } = require("./routes");
 
 setDefaultCredentials(config.user);
 
@@ -41,7 +40,6 @@ app.use(express.urlencoded({ extended: true }));
 app.post("/ssh/host/:host?", connect);
 app.post("/ssh", express.static(publicPath, config.express.ssh));
 app.use("/ssh", express.static(publicPath, config.express.ssh));
-app.get("/ssh/reauth", reauth);
 app.get("/ssh/host/:host?", connect);
 app.post("/submit", (req, res) => {
 	connect(req, res, req.body.host, req.body.username, req.body.userpassword);

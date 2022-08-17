@@ -23,8 +23,6 @@ function connError(socket, err) {
 	const { session } = socket.request;
 	if (err?.level === "client-authentication") {
 		msg = `Authentication failure user=${session.username} from=${socket.handshake.address}`;
-		socket.emit("allowreauth", session.ssh.allowreauth);
-		socket.emit("reauth");
 	}
 	if (err?.code === "ENOTFOUND") {
 		msg = `Host not found: ${err.hostname}`;
@@ -108,7 +106,6 @@ module.exports = function appSocket(socket) {
 		conn.on("handshake", (data) => {
 			socket.emit("setTerminalOpts", socket.request.session.ssh.terminal);
 			socket.emit("menu");
-			socket.emit("allowreauth", socket.request.session.ssh.allowreauth);
 			socket.emit("title", `ssh://${socket.request.session.ssh.host}`);
 			if (socket.request.session.ssh.header.background)
 				socket.emit("headerBackground", socket.request.session.ssh.header.background);
@@ -122,7 +119,7 @@ module.exports = function appSocket(socket) {
 		conn.on("ready", () => {
 			sshnakedebug(
 				socket,
-				`CONN READY: LOGIN: user=${socket.request.session.username} from=${socket.handshake.address} host=${socket.request.session.ssh.host} port=${socket.request.session.ssh.port} allowreplay=${socket.request.session.ssh.allowreplay} term=${socket.request.session.ssh.term}`
+				`CONN READY: LOGIN: user=${socket.request.session.username} from=${socket.handshake.address} host=${socket.request.session.ssh.host} port=${socket.request.session.ssh.port} term=${socket.request.session.ssh.term}`
 			);
 			auditLog(
 				socket,
@@ -131,7 +128,6 @@ module.exports = function appSocket(socket) {
 			login = true;
 			socket.emit("status", "SSH CONNECTION ESTABLISHED");
 			socket.emit("statusBackground", "green");
-			socket.emit("allowreplay", socket.request.session.ssh.allowreplay);
 			const { term, cols, rows } = socket.request.session.ssh;
 			conn.shell({ term, cols, rows }, (err, stream) => {
 				if (err) {
@@ -152,18 +148,6 @@ module.exports = function appSocket(socket) {
 					socket.disconnect(true);
 				});
 				socket.on("control", (controlData) => {
-					if (controlData === "replayCredentials" && socket.request.session.ssh.allowreplay) {
-						stream.write(`${socket.request.session.userpassword}\n`);
-					}
-					if (controlData === "reauth" && socket.request.session.username && login === true) {
-						auditLog(
-							socket,
-							`LOGOUT user=${socket.request.session.username} from=${socket.handshake.address} host=${socket.request.session.ssh.host}:${socket.request.session.ssh.port}`
-						);
-						login = false;
-						conn.end();
-						socket.disconnect(true);
-					}
 					sshnakedebug(socket, `SOCKET CONTROL: ${controlData}`);
 				});
 				socket.on("resize", (data) => {

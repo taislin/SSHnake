@@ -9,23 +9,6 @@ const publicPath = path.join(nodeRoot, "client", "public");
 const { parseBool } = require("./util");
 const config = require("./config");
 
-exports.reauth = function reauth(req, res) {
-	let { referer } = req.headers;
-	if (!validator.isURL(referer, { host_whitelist: ["localhost"] })) {
-		console.error(
-			`SSHnake (${req.sessionID}) ERROR: Referrer '${referer}' for '/reauth' invalid. Setting to '/' which will probably fail.`
-		);
-		referer = "/";
-	}
-	res
-		.status(401)
-		.send(
-			sanitizehtml(
-				`<!DOCTYPE html><html><head><meta http-equiv="refresh" content="0; url=${referer}"></head><body bgcolor="#000"></body></html>`
-			)
-		);
-};
-
 exports.connect = function connect(req, res, _host = null, _user = null, _password = null) {
 	res.sendFile(path.join(path.join(publicPath, "client.html")));
 	let { host, port } = config.ssh;
@@ -150,10 +133,6 @@ exports.connect = function connect(req, res, _host = null, _user = null, _passwo
 			letterSpacing,
 			lineHeight,
 		},
-		allowreplay:
-			config.options.challengeButton ||
-			(validator.isBoolean(`${req.headers.allowreplay}`) ? parseBool(req.headers.allowreplay) : false),
-		allowreauth: config.options.allowreauth || false,
 		mrhsession:
 			validator.isAlphanumeric(`${req.headers.mrhsession}`) && req.headers.mrhsession ? req.headers.mrhsession : "none",
 		serverlog: {

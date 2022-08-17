@@ -7,11 +7,8 @@ const debug = require("debug")("SSHnake");
 require("xterm/css/xterm.css");
 require("../css/style.css");
 
-/* global Blob, logBtn, credentialsBtn, reauthBtn, downloadLogBtn */ // eslint-disable-line
 let sessionLogEnable = false;
 let loggedData = false;
-let allowreplay = false;
-let allowreauth = false;
 let sessionLog;
 let sessionFooter;
 let logDate;
@@ -21,8 +18,6 @@ let errorExists;
 const term = new Terminal();
 // DOM properties
 const logBtn = document.getElementById("logBtn");
-const credentialsBtn = document.getElementById("credentialsBtn");
-const reauthBtn = document.getElementById("reauthBtn");
 const downloadLogBtn = document.getElementById("downloadLogBtn");
 const status = document.getElementById("status");
 const header = document.getElementById("header");
@@ -38,15 +33,6 @@ fitAddon.fit();
 const socket = io({
 	path: "/ssh/socket.io",
 });
-
-// reauthenticate
-function reauthSession() {
-	// eslint-disable-line
-	debug("re-authenticating");
-	socket.emit("control", "reauth");
-	window.location.href = "/ssh/reauth";
-	return false;
-}
 
 // cross browser method to "download" an element to the local system
 // used for our client-side logging feature
@@ -109,27 +95,10 @@ function toggleLog() {
 	return false;
 }
 
-// replay password to server, requires
-function replayCredentials() {
-	// eslint-disable-line
-	socket.emit("control", "replayCredentials");
-	debug(`control: replayCredentials`);
-	term.focus();
-	return false;
-}
-
 // draw/re-draw menu and reattach listeners
 // when dom is changed, listeners are abandonded
 function drawMenu() {
 	logBtn.addEventListener("click", toggleLog);
-	if (allowreauth) {
-		reauthBtn.addEventListener("click", reauthSession);
-		reauthBtn.style.display = "block";
-	}
-	if (allowreplay) {
-		credentialsBtn.addEventListener("click", replayCredentials);
-		credentialsBtn.style.display = "block";
-	}
 	if (loggedData) {
 		downloadLogBtn.addEventListener("click", downloadLog);
 		downloadLogBtn.style.display = "block";
@@ -205,28 +174,6 @@ socket.on("statusBackground", (data) => {
 	status.style.backgroundColor = data;
 });
 
-socket.on("allowreplay", (data) => {
-	if (data === true) {
-		debug(`allowreplay: ${data}`);
-		allowreplay = true;
-		drawMenu();
-	} else {
-		allowreplay = false;
-		debug(`allowreplay: ${data}`);
-	}
-});
-
-socket.on("allowreauth", (data) => {
-	if (data === true) {
-		debug(`allowreauth: ${data}`);
-		allowreauth = true;
-		drawMenu();
-	} else {
-		allowreauth = false;
-		debug(`allowreauth: ${data}`);
-	}
-});
-
 socket.on("disconnect", (err) => {
 	if (!errorExists) {
 		status.style.backgroundColor = "red";
@@ -240,12 +187,6 @@ socket.on("error", (err) => {
 	if (!errorExists) {
 		status.style.backgroundColor = "red";
 		status.innerHTML = `ERROR: ${err}`;
-	}
-});
-
-socket.on("reauth", () => {
-	if (allowreauth) {
-		reauthSession();
 	}
 });
 
