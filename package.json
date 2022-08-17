@@ -39,7 +39,7 @@
     "validator": "^13.7.0"
   },
   "scripts": {
-    "start": "npm run build && node index.js",
+    "start": "node index.js",
     "build": "webpack --progress --config scripts/webpack.prod.js --mode=production",
     "builddev": "webpack --progress --config scripts/webpack.dev.js"
   },

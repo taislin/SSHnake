@@ -20,8 +20,10 @@ exports.reauth = function reauth(req, res) {
 	res
 		.status(401)
 		.send(
-			sanitizehtml(`<!DOCTYPE html><html><head><meta http-equiv="refresh" content="0; url=${referer}"></head><body bgcolor="#000"></body></html>`
-		));
+			sanitizehtml(
+				`<!DOCTYPE html><html><head><meta http-equiv="refresh" content="0; url=${referer}"></head><body bgcolor="#000"></body></html>`
+			)
+		);
 };
 
 exports.connect = function connect(req, res, _host = null, _user = null, _password = null) {
@@ -49,7 +51,7 @@ exports.connect = function connect(req, res, _host = null, _user = null, _passwo
 		}
 	}
 	if (_user && _password) {
-		req.session.username == _user;
+		req.session.username = _user;
 		req.session.userpassword = _password;
 	}
 	if (req.method === "POST" && req.body.username && req.body.userpassword) {
