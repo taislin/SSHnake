@@ -86,26 +86,26 @@ function toggleLog() {
 	if (sessionLogEnable === true) {
 		sessionLogEnable = false;
 		loggedData = true;
-		logBtn.innerHTML = '<i class="fas fa-clipboard fa-fw"></i> Start Log';
+		logBtn.innerHTML = '<em class="fas fa-clipboard fa-fw"></em> Start Log';
 		currentDate = new Date();
 		sessionLog = `${sessionLog}\r\n\r\nLog End for ${sessionFooter}: ${currentDate.getFullYear()}/${
 			currentDate.getMonth() + 1
 		}/${currentDate.getDate()} @ ${currentDate.getHours()}:${currentDate.getMinutes()}:${currentDate.getSeconds()}\r\n`;
 		logDate = currentDate;
 		term.focus();
-		return false;
+	} else {
+		sessionLogEnable = true;
+		loggedData = true;
+		logBtn.innerHTML = '<em class="fas fa-cog fa-spin fa-fw"></em> Stop Log';
+		downloadLogBtn.style.color = "#000";
+		downloadLogBtn.addEventListener("click", downloadLog);
+		currentDate = new Date();
+		sessionLog = `Log Start for ${sessionFooter}: ${currentDate.getFullYear()}/${
+			currentDate.getMonth() + 1
+		}/${currentDate.getDate()} @ ${currentDate.getHours()}:${currentDate.getMinutes()}:${currentDate.getSeconds()}\r\n\r\n`;
+		logDate = currentDate;
+		term.focus();
 	}
-	sessionLogEnable = true;
-	loggedData = true;
-	logBtn.innerHTML = '<i class="fas fa-cog fa-spin fa-fw"></i> Stop Log';
-	downloadLogBtn.style.color = "#000";
-	downloadLogBtn.addEventListener("click", downloadLog);
-	currentDate = new Date();
-	sessionLog = `Log Start for ${sessionFooter}: ${currentDate.getFullYear()}/${
-		currentDate.getMonth() + 1
-	}/${currentDate.getDate()} @ ${currentDate.getHours()}:${currentDate.getMinutes()}:${currentDate.getSeconds()}\r\n\r\n`;
-	logDate = currentDate;
-	term.focus();
 	return false;
 }
 

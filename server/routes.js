@@ -2,7 +2,7 @@
 // ssh.js
 const validator = require("validator");
 const path = require("path");
-
+const sanitizehtml = require("sanitize-html");
 const nodeRoot = path.dirname(require.main.filename);
 
 const publicPath = path.join(nodeRoot, "client", "public");
@@ -20,8 +20,8 @@ exports.reauth = function reauth(req, res) {
 	res
 		.status(401)
 		.send(
-			`<!DOCTYPE html><html><head><meta http-equiv="refresh" content="0; url=${referer}"></head><body bgcolor="#000"></body></html>`
-		);
+			sanitizehtml(`<!DOCTYPE html><html><head><meta http-equiv="refresh" content="0; url=${referer}"></head><body bgcolor="#000"></body></html>`
+		));
 };
 
 exports.connect = function connect(req, res, _host = null, _user = null, _password = null) {
