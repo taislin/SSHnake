@@ -299,7 +299,7 @@ body, html  {
 #menu:hover .dropup-content {
     display: block;
 }
-#logBtn, #credentialsBtn, #reauthBtn {
+#logBtn {
     color: #000;
 }
 
