@@ -5,7 +5,6 @@ const nodeRoot = path.dirname(require.main.filename);
 const publicPath = path.join(nodeRoot, "client", "public");
 
 const express = require("express");
-const logger = require("morgan");
 
 const app = express();
 const server = require("http").Server(app);
@@ -33,7 +32,6 @@ function safeShutdownGuard(req, res, next) {
 // express
 app.use(safeShutdownGuard);
 app.use(session);
-if (config.accesslog) app.use(logger("common"));
 app.disable("x-powered-by");
 app.use(favicon(path.join(publicPath, "favicon.ico")));
 app.use(express.urlencoded({ extended: true }));

@@ -89,7 +89,6 @@ const configDefault = {
 		client: false,
 		server: false,
 	},
-	accesslog: false,
 	verify: false,
 	safeShutdownDuration: 300,
 };
