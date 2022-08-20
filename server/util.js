@@ -2,10 +2,6 @@
 // util.js
 
 // private
-const debug = require("debug")("SSHnake");
-const Auth = require("basic-auth");
-
-let defaultCredentials = { username: null, password: null, privatekey: null };
 
 exports.setDefaultCredentials = function setDefaultCredentials({
 	name: username,

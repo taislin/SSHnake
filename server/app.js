@@ -8,7 +8,6 @@ const express = require("express");
 
 const app = express();
 const server = require("http").Server(app);
-const favicon = require("serve-favicon");
 const io = require("socket.io")(server, config.socketio);
 const session = require("express-session")(config.express);
 
@@ -33,7 +32,6 @@ function safeShutdownGuard(req, res, next) {
 app.use(safeShutdownGuard);
 app.use(session);
 app.disable("x-powered-by");
-app.use(favicon(path.join(publicPath, "favicon.ico")));
 app.use(express.urlencoded({ extended: true }));
 app.post("/ssh/host/:host?", connect);
 app.post("/ssh", express.static(publicPath, config.express.ssh));
