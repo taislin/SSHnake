@@ -19,6 +19,7 @@ function prefix(socket) {
 // public
 function sshnakedebug(socket, msg) {
 	debug("SSHnake")(`${prefix(socket)} ${msg}`);
+	//console.debug(msg);
 }
 
 /**

@@ -90,7 +90,7 @@ const configDefault = {
 		server: false,
 	},
 	verify: false,
-	safeShutdownDuration: 300,
+	safeShutdownDuration: 30,
 };
 
 // test if config.json exists, if not provide error message but try to run anyway

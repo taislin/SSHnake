@@ -19,6 +19,8 @@ const term = new Terminal();
 // DOM properties
 const logBtn = document.getElementById("logBtn");
 const downloadLogBtn = document.getElementById("downloadLogBtn");
+const rowsInput = document.getElementById("rowsInput");
+const colsInput = document.getElementById("colsInput");
 const status = document.getElementById("status");
 const header = document.getElementById("header");
 const footer = document.getElementById("footer");
@@ -103,6 +105,16 @@ function drawMenu() {
 		downloadLogBtn.addEventListener("click", downloadLog);
 		downloadLogBtn.style.display = "block";
 	}
+	adjustBtn.innerHTML = "↔️ Adjust Window";
+	adjustBtn.style.display = "block";
+	adjustBtn.addEventListener("click", doResize(colsInput.value, rowsInput.value));
+}
+
+function doResize(cols, rows) {
+	colsInput.value = "0";
+	rowsInput.value = "0";
+	socket.emit("resize", { cols: Number(cols), rows: Number(rows) });
+	debug(`resize: ${JSON.stringify({ cols: cols, rows: rows })}`);
 }
 
 function resizeScreen() {
