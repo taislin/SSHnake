@@ -2,12 +2,14 @@
 // ssh.js
 const validator = require("validator");
 const path = require("path");
-const sanitizehtml = require("sanitize-html");
 const nodeRoot = path.dirname(require.main.filename);
 
 const publicPath = path.join(nodeRoot, "client", "public");
-const { parseBool } = require("./util");
 const config = require("./config");
+
+function parseBool(str) {
+	return str.toLowerCase() === "true";
+}
 
 exports.connect = function connect(req, res, _host = null, _user = null, _password = null) {
 	res.sendFile(path.join(path.join(publicPath, "client.html")));

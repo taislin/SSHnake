@@ -12,11 +12,8 @@ const io = require("socket.io")(server, config.socketio);
 const session = require("express-session")(config.express);
 
 const appSocket = require("./socket");
-const { setDefaultCredentials } = require("./util");
 const { sshnakedebug } = require("./logging");
 const { connect, notfound, handleErrors } = require("./routes");
-
-setDefaultCredentials(config.user);
 
 // safe shutdown
 let remainingSeconds = config.safeShutdownDuration;

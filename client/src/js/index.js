@@ -115,6 +115,7 @@ function doResize(cols, rows) {
 	rowsInput.value = "0";
 	socket.emit("resize", { cols: Number(cols), rows: Number(rows) });
 	debug(`resize: ${JSON.stringify({ cols: cols, rows: rows })}`);
+	return true;
 }
 
 function resizeScreen() {
