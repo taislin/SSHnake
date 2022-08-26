@@ -19,6 +19,7 @@ const term = new Terminal();
 // DOM properties
 const logBtn = document.getElementById("logBtn");
 const downloadLogBtn = document.getElementById("downloadLogBtn");
+const adjustBtn = document.getElementById("adjustBtn");
 const rowsInput = document.getElementById("rowsInput");
 const colsInput = document.getElementById("colsInput");
 const status = document.getElementById("status");
@@ -74,7 +75,7 @@ function toggleLog() {
 	if (sessionLogEnable === true) {
 		sessionLogEnable = false;
 		loggedData = true;
-		logBtn.innerHTML = '<em class="fas fa-clipboard fa-fw"></em> Start Log';
+		logBtn.innerHTML = "Start Log";
 		currentDate = new Date();
 		sessionLog = `${sessionLog}\r\n\r\nLog End for ${sessionFooter}: ${currentDate.getFullYear()}/${
 			currentDate.getMonth() + 1
@@ -84,7 +85,7 @@ function toggleLog() {
 	} else {
 		sessionLogEnable = true;
 		loggedData = true;
-		logBtn.innerHTML = '<em class="fas fa-cog fa-spin fa-fw"></em> Stop Log';
+		logBtn.innerHTML = "Stop Log";
 		downloadLogBtn.style.color = "#000";
 		downloadLogBtn.addEventListener("click", downloadLog);
 		currentDate = new Date();
@@ -113,6 +114,8 @@ function drawMenu() {
 function doResize(cols, rows) {
 	colsInput.value = "0";
 	rowsInput.value = "0";
+	term.clear();
+	console.log("resizing window");
 	socket.emit("resize", { cols: Number(cols), rows: Number(rows) });
 	debug(`resize: ${JSON.stringify({ cols: cols, rows: rows })}`);
 	return true;
