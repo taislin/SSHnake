@@ -12,7 +12,6 @@ const io = require("socket.io")(server, config.socketio);
 const session = require("express-session")(config.express);
 
 const appSocket = require("./socket");
-const { sshnakedebug } = require("./logging");
 const { connect, notfound, handleErrors } = require("./routes");
 
 // safe shutdown
@@ -97,7 +96,7 @@ const onConnection = (socket) => {
 	socket.on("geometry", (cols, rows) => {
 		// TODO need to rework how we pass settings to ssh2, this is less than ideal
 		socket.request.session.ssh.terminfo = { cols, rows };
-		sshnakedebug(socket, `SOCKET GEOMETRY: termCols = ${cols}, termRows = ${rows}`);
+		console.debug(`SOCKET GEOMETRY: termCols = ${cols}, termRows = ${rows}`);
 	});
 };
 

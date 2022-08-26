@@ -1,11 +1,5 @@
-/* eslint no-unused-expressions: ["error", { "allowShortCircuit": true, "allowTernary": true }],
-   no-console: ["error", { allow: ["warn", "error", "info"] }] */
-const path = require("path");
-const debugSSHnake = require("debug")("SSHnake");
 const crypto = require("crypto");
 const util = require("util");
-
-const nodeRoot = path.dirname(require.main.filename);
 
 // establish defaults
 const configDefault = {
@@ -94,7 +88,7 @@ const configDefault = {
 };
 
 // test if config.json exists, if not provide error message but try to run anyway
-debugSSHnake(`\nCurrent config: ${util.inspect(configDefault)}`);
+console.debug(`\nCurrent config: ${util.inspect(configDefault)}`);
 
 const config = configDefault;
 
