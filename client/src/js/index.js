@@ -1,11 +1,9 @@
 /* eslint-disable import/no-extraneous-dependencies */
-import { io } from "socket.io-client";
-import { Terminal } from "xterm";
-import { FitAddon } from "xterm-addon-fit";
-
-const debug = require("debug")("SSHnake");
-require("xterm/css/xterm.css");
-require("../css/style.css");
+const Terminal = require("./xterm.min.js");
+const FitAddon = require("./fit.min.js");
+const Linkify = require("./linkify.min.js");
+const validator = require("https://cdnjs.cloudflare.com/ajax/libs/validator/13.7.0/validator.min.js");
+const SSH = require("ssh2");
 
 let sessionLogEnable = false;
 let loggedData = false;
@@ -14,28 +12,20 @@ let sessionFooter;
 let logDate;
 let currentDate;
 let myFile;
-let errorExists;
 const term = new Terminal();
 // DOM properties
 const logBtn = document.getElementById("logBtn");
 const downloadLogBtn = document.getElementById("downloadLogBtn");
-const adjustBtn = document.getElementById("adjustBtn");
-const rowsInput = document.getElementById("rowsInput");
-const colsInput = document.getElementById("colsInput");
 const status = document.getElementById("status");
-const header = document.getElementById("header");
 const footer = document.getElementById("footer");
-const countdown = document.getElementById("countdown");
+const loginform = document.getElementById("loginform");
+const terminalwindow = document.getElementById("terminal-container");
 const fitAddon = new FitAddon();
 const terminalContainer = document.getElementById("terminal-container");
 term.loadAddon(fitAddon);
 term.open(terminalContainer);
 term.focus();
 fitAddon.fit();
-
-const socket = io({
-	path: "/ssh/socket.io",
-});
 
 // cross browser method to "download" an element to the local system
 // used for our client-side logging feature
@@ -106,117 +96,157 @@ function drawMenu() {
 		downloadLogBtn.addEventListener("click", downloadLog);
 		downloadLogBtn.style.display = "block";
 	}
-	adjustBtn.innerHTML = "↔️ Adjust Window";
-	adjustBtn.style.display = "block";
-	adjustBtn.addEventListener("click", doResize(colsInput.value, rowsInput.value));
-}
-
-function doResize(cols, rows) {
-	colsInput.value = "0";
-	rowsInput.value = "0";
-	term.clear();
-	console.log("resizing window");
-	socket.emit("resize", { cols: Number(cols), rows: Number(rows) });
-	debug(`resize: ${JSON.stringify({ cols: cols, rows: rows })}`);
-	return true;
 }
 
 function resizeScreen() {
 	fitAddon.fit();
-	socket.emit("resize", { cols: term.cols, rows: term.rows });
-	debug(`resize: ${JSON.stringify({ cols: term.cols, rows: term.rows })}`);
 }
 
 window.addEventListener("resize", resizeScreen, false);
-
+window.addEventListener(
+	"load",
+	function () {
+		var terminalContainer = document.getElementById("terminal-container");
+		var term = new Terminal({ cursorBlink: true, scrollback: 10000, tabStopWidth: 8, bellStyle: "sound" });
+		term.open(terminalContainer);
+		term.fit();
+	},
+	false
+);
 term.onData((data) => {
-	socket.emit("data", data);
-});
-
-socket.on("data", (data) => {
 	term.write(data);
 	if (sessionLogEnable) {
 		sessionLog += data;
 	}
 });
 
-socket.on("connect", () => {
-	socket.emit("geometry", term.cols, term.rows);
-	debug(`geometry: ${term.cols}, ${term.rows}`);
-});
-
-socket.on("setTerminalOpts", (data) => {
-	term.options = data;
-});
-
-socket.on("title", (data) => {
-	document.title = data;
-});
-
-socket.on("menu", () => {
-	drawMenu();
-});
-
-socket.on("status", (data) => {
-	status.innerHTML = data;
-});
-
-socket.on("ssherror", (data) => {
-	status.innerHTML = data;
-	status.style.backgroundColor = "red";
-	errorExists = true;
-});
-
-socket.on("headerBackground", (data) => {
-	header.style.backgroundColor = data;
-});
-
-socket.on("header", (data) => {
-	if (data) {
-		header.innerHTML = data;
-		header.style.display = "block";
-		// header is 19px and footer is 19px, recaculate new terminal-container and resize
-		terminalContainer.style.height = "calc(100% - 38px)";
-		resizeScreen();
-	}
-});
-
-socket.on("footer", (data) => {
-	sessionFooter = data;
-	footer.innerHTML = data;
-});
-
-socket.on("statusBackground", (data) => {
-	status.style.backgroundColor = data;
-});
-
-socket.on("disconnect", (err) => {
-	if (!errorExists) {
-		status.style.backgroundColor = "red";
-		status.innerHTML = `WEBSOCKET SERVER DISCONNECTED: ${err}`;
-	}
-	socket.io.reconnection(false);
-	countdown.classList.remove("active");
-});
-
-socket.on("error", (err) => {
-	if (!errorExists) {
-		status.style.backgroundColor = "red";
-		status.innerHTML = `ERROR: ${err}`;
-	}
-});
-
-// safe shutdown
-let hasCountdownStarted = false;
-
-socket.on("shutdownCountdownUpdate", (remainingSeconds) => {
-	if (!hasCountdownStarted) {
-		countdown.classList.add("active");
-		hasCountdownStarted = true;
-	}
-	countdown.innerText = `Shutting down in ${remainingSeconds}s`;
-});
+document.title = "SSHnake";
+drawMenu();
 
 term.onTitleChange((title) => {
 	document.title = title;
 });
+
+function connectValidate(_host = null, _port = 22, _user = null, _password = null) {
+	// capture, assign, and validate variables
+	let session = { host: null, username: null, password: null, ssh: null, port: 2 };
+	if (_host) {
+		if (validator.isIP(`${_host}`) || validator.isFQDN(_host) || /^(([a-z]|[A-Z]|\d|[!^(){}\-_~])+)?\w$/.test(_host)) {
+			session.host = _host;
+		}
+	}
+	if (_user && _password) {
+		session.username = _user;
+		session.userpassword = _password;
+	}
+	if (validator.isInt(_port)) {
+		session.port = _port;
+	}
+	session.ssh = {
+		term: "xterm-color",
+		readyTimeout: 20000,
+		keepaliveInterval: 120000,
+		keepaliveCountMax: 10,
+		cols: 200,
+		rows: 350,
+		header: { text: null, background: "green" },
+		algorithms: {
+			kex: [
+				"ecdh-sha2-nistp256",
+				"ecdh-sha2-nistp384",
+				"ecdh-sha2-nistp521",
+				"diffie-hellman-group-exchange-sha256",
+				"diffie-hellman-group14-sha1",
+			],
+			cipher: [
+				"aes128-ctr",
+				"aes192-ctr",
+				"aes256-ctr",
+				"aes128-gcm",
+				"aes128-gcm@openssh.com",
+				"aes256-gcm",
+				"aes256-gcm@openssh.com",
+				"aes256-cbc",
+			],
+			hmac: ["hmac-sha2-256", "hmac-sha2-512", "hmac-sha1"],
+		},
+	};
+	return session;
+}
+async function setupConnection() {
+	let _host = document.getElementById("host").value;
+	let _port = 22;
+	let _user = document.getElementById("username").value;
+	let _password = document.getElementById("password").value;
+	const conn = new SSH();
+	const session = connectValidate(_host, _port, _user, _password);
+	footer.innerHTML = `ssh://${session.username}@${session.host}:${session.port}`;
+
+	conn.on("ready", () => {
+		login = true;
+		status.innerHTML = "SSH CONNECTION ESTABLISHED";
+		status.style.backgroundColor = "green";
+		loginform.style.visibility = "hidden";
+		terminalwindow.style.visibility = "visible";
+		const { term, cols, rows } = session.ssh;
+		conn.shell({ term, cols, rows }, (err, stream) => {
+			if (err) {
+				console.error(`EXEC ERROR` + err);
+				conn.end();
+				return;
+			}
+			stream.on("close", (code, signal) => {
+				console.debug(`STREAM CLOSE: ${util.inspect([code, signal])}`);
+				if (session.username && login === true) {
+					console.log(`LOGOUT user=${_username} host=${_host}:${_port}`);
+					login = false;
+				}
+				if (code !== 0 && typeof code !== "undefined")
+					console.error("STREAM CLOSE" + util.inspect({ message: [code, signal] }));
+				conn.end();
+			});
+			stream.stderr.on("data", (data) => {
+				console.error(`STDERR: ${data}`);
+			});
+		});
+	});
+
+	conn.on("end", (err) => {
+		if (err) console.error("CONN END BY HOST" + err);
+		console.debug("CONN END BY HOST");
+	});
+	conn.on("close", (err) => {
+		if (err) console.error("CONN CLOSE" + err);
+		console.debug("CONN CLOSE");
+	});
+	conn.on("error", (err) => connError(session, err));
+
+	conn.on("keyboard-interactive", (_name, _instructions, _instructionsLang, _prompts, finish) => {
+		console.debug("CONN keyboard-interactive");
+		finish([session.password]);
+	});
+	if (session.username && (session.password || session.privatekey) && session.ssh) {
+		const { ssh } = session;
+		ssh.username = session.username;
+		ssh.password = session.password;
+		ssh.tryKeyboard = true;
+		conn.connect(ssh);
+	} else {
+		console.log(
+			`CONN CONNECT: Attempt to connect without session.username/password or session variables defined, potentially previously abandoned client session. disconnecting client.\r\n`
+		);
+	}
+}
+function connError(session, err) {
+	let msg = util.inspect(err);
+	if (err?.level === "client-authentication") {
+		msg = `Authentication failure user=${session.username}`;
+	}
+	if (err?.code === "ENOTFOUND") {
+		msg = `Host not found: ${err.hostname}`;
+	}
+	if (err?.level === "client-timeout") {
+		msg = `Connection Timeout: ${session.ssh.host}`;
+	}
+	console.error("CONN ERROR" + msg);
+}
