@@ -2,10 +2,7 @@
 import { io } from "socket.io-client";
 import { Terminal } from "xterm";
 import { FitAddon } from "xterm-addon-fit";
-
 const debug = require("debug")("SSHnake");
-require("xterm/css/xterm.css");
-require("../css/style.css");
 
 let sessionLogEnable = false;
 let loggedData = false;
@@ -34,7 +31,7 @@ term.focus();
 fitAddon.fit();
 
 const socket = io({
-	path: "/ssh/socket.io",
+	path: "/socket.io",
 });
 
 // cross browser method to "download" an element to the local system

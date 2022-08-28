@@ -1,31 +1,46 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <title>SSHnake</title>
-  <link rel="stylesheet" href="/ssh/sshnake.css" />
-  <link rel="icon" href="/ssh/favicon.ico" />
-  <style>
-    html, body {background-color: #000;height: 100%;margin: 0;}.dropup-content {display: none;}
-  </style>
-</head>
-<body>
-  <div class="box">
-    <div id="header"></div>
-    <div id="terminal-container" class="terminal"></div>
-    <div id="bottomdiv">
-      <div class="dropup" id="menu">
-        <em class="fas fa-bars fa-fw"></em> Menu
-        <div id="dropupContent" class="dropup-content">
-          <a id="logBtn">📝 Start Log</a>
-          <a id="downloadLogBtn">📥 Download Log</a>
-          <div style="color:#000">H:<input id="colsInput" value="0" style="width:30%"></input> H:<input id="rowsInput" value="0" style="width:30%"></input></div><a id="adjustBtn">↔️ Adjust Window</a>
-        </div>
-      </div>
-      <div id="footer"></div>
-      <div id="status"></div>
-      <div id="countdown"></div>
-    </div>
-  </div>
-<script src="/ssh/sshnake.bundle.js" defer></script>
-</body>
+	<head>
+		<title>SSHnake</title>
+		<link rel="stylesheet" href="sshnake.css" />
+		<link rel="icon" href="favicon.ico" />
+		<style>
+			html,
+			body {
+				background-color: #000;
+				height: 100%;
+				margin: 0;
+			}
+			.dropup-content {
+				display: none;
+			}
+		</style>
+	</head>
+	<body>
+		<div class="box">
+			<div id="header"></div>
+			<div id="terminal-container" class="terminal"></div>
+			<div id="bottomdiv">
+				<div class="dropup" id="menu">
+					<em class="fas fa-bars fa-fw"></em> Menu
+					<div id="dropupContent" class="dropup-content">
+						<a id="logBtn">📝 Start Log</a>
+						<a id="downloadLogBtn">📥 Download Log</a>
+						<div style="color: #000">
+							H:<input id="colsInput" value="0" style="width: 30%" /> H:<input
+								id="rowsInput"
+								value="0"
+								style="width: 30%"
+							/>
+						</div>
+						<a id="adjustBtn">↔️ Adjust Window</a>
+					</div>
+				</div>
+				<div id="footer"></div>
+				<div id="status"></div>
+				<div id="countdown"></div>
+			</div>
+		</div>
+		<script src="sshnake.bundle.js" defer></script>
+	</body>
 </html>

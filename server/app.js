@@ -1,6 +1,6 @@
 const config = require("./config");
 const path = require("path");
-
+const crypto = require("crypto");
 const nodeRoot = path.dirname(require.main.filename);
 const publicPath = path.join(nodeRoot, "client", "public");
 
@@ -8,15 +8,37 @@ const express = require("express");
 
 const app = express();
 const server = require("http").Server(app);
-const io = require("socket.io")(server, config.socketio);
-const session = require("express-session")(config.express);
+const io = require("socket.io")(server, {
+	serveClient: false,
+	path: "/socket.io",
+	origins: ["localhost:2222"],
+});
+const expressConfig = {
+	secret: crypto.randomBytes(20).toString("hex"),
+	name: "SSHnake",
+	resave: true,
+	saveUninitialized: false,
+	unset: "destroy",
+	ssh: {
+		dotfiles: "ignore",
+		etag: false,
+		extensions: ["htm", "html"],
+		index: false,
+		maxAge: "1s",
+		redirect: false,
+		setHeaders(res) {
+			res.set("x-timestamp", Date.now());
+		},
+	},
+};
+const session = require("express-session")(expressConfig);
 
 const appSocket = require("./socket");
 const { sshnakedebug } = require("./logging");
 const { connect, notfound, handleErrors } = require("./routes");
 
 // safe shutdown
-let remainingSeconds = config.safeShutdownDuration;
+let remainingSeconds = 30;
 let shutdownMode = false;
 let shutdownInterval;
 let connectionCount = 0;
@@ -30,10 +52,10 @@ app.use(safeShutdownGuard);
 app.use(session);
 app.disable("x-powered-by");
 app.use(express.urlencoded({ extended: true }));
-app.post("/ssh/host/:host?", connect);
-app.post("/ssh", express.static(publicPath, config.express.ssh));
-app.use("/ssh", express.static(publicPath, config.express.ssh));
-app.get("/ssh/host/:host?", connect);
+app.post("/host/:host?", connect);
+app.post("/", express.static(publicPath, expressConfig));
+app.use("/", express.static(publicPath, expressConfig));
+app.get("/host/:host?", connect);
 app.post("/submit", (req, res) => {
 	connect(req, res, req.body.host, req.body.username, req.body.userpassword);
 });

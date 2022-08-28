@@ -1,5 +1,4 @@
-const { config } = require("./server/app");
-const { server } = require("./server/app");
+const { server, config } = require("./server/app");
 
 server.listen({ host: config.listen.ip, port: config.listen.port });
 

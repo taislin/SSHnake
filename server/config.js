@@ -2,7 +2,6 @@
    no-console: ["error", { allow: ["warn", "error", "info"] }] */
 const path = require("path");
 const debugSSHnake = require("debug")("SSHnake");
-const crypto = require("crypto");
 const util = require("util");
 
 const nodeRoot = path.dirname(require.main.filename);
@@ -12,29 +11,6 @@ const configDefault = {
 	listen: {
 		ip: "0.0.0.0",
 		port: 2222,
-	},
-	socketio: {
-		serveClient: false,
-		path: "/ssh/socket.io",
-		origins: ["localhost:2222"],
-	},
-	express: {
-		secret: crypto.randomBytes(20).toString("hex"),
-		name: "SSHnake",
-		resave: true,
-		saveUninitialized: false,
-		unset: "destroy",
-		ssh: {
-			dotfiles: "ignore",
-			etag: false,
-			extensions: ["htm", "html"],
-			index: false,
-			maxAge: "1s",
-			redirect: false,
-			setHeaders(res) {
-				res.set("x-timestamp", Date.now());
-			},
-		},
 	},
 	user: {
 		name: null,
@@ -90,22 +66,9 @@ const configDefault = {
 		server: false,
 	},
 	verify: false,
-	safeShutdownDuration: 30,
 };
 
 // test if config.json exists, if not provide error message but try to run anyway
 debugSSHnake(`\nCurrent config: ${util.inspect(configDefault)}`);
 
-const config = configDefault;
-
-if (process.env.LISTEN) config.listen.ip = process.env.LISTEN;
-
-if (process.env.PORT) config.listen.port = process.env.PORT;
-
-if (process.env.SOCKETIO_ORIGINS) config.socketio.origins = process.env.SOCKETIO_ORIGINS;
-
-if (process.env.SOCKETIO_PATH) config.socketio.path = process.env.SOCKETIO_PATH;
-
-if (process.env.SOCKETIO_SERVECLIENT) config.socketio.serveClient = process.env.SOCKETIO_SERVECLIENT;
-
-module.exports = config;
+module.exports = configDefault;
