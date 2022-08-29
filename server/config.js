@@ -67,6 +67,9 @@ const configDefault = {
 	},
 	verify: false,
 };
+if (process.env.LISTEN) config.listen.ip = process.env.LISTEN;
+
+if (process.env.PORT) config.listen.port = process.env.PORT;
 
 // test if config.json exists, if not provide error message but try to run anyway
 debugSSHnake(`\nCurrent config: ${util.inspect(configDefault)}`);
