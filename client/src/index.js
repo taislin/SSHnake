@@ -2,7 +2,6 @@
 import { io } from "socket.io-client";
 import { Terminal } from "xterm";
 import { FitAddon } from "xterm-addon-fit";
-const debug = require("debug")("SSHnake");
 
 let sessionLogEnable = false;
 let loggedData = false;
@@ -114,14 +113,12 @@ function doResize(cols, rows) {
 	term.clear();
 	console.log("resizing window");
 	socket.emit("resize", { cols: Number(cols), rows: Number(rows) });
-	debug(`resize: ${JSON.stringify({ cols: cols, rows: rows })}`);
 	return true;
 }
 
 function resizeScreen() {
 	fitAddon.fit();
 	socket.emit("resize", { cols: term.cols, rows: term.rows });
-	debug(`resize: ${JSON.stringify({ cols: term.cols, rows: term.rows })}`);
 }
 
 window.addEventListener("resize", resizeScreen, false);
@@ -139,7 +136,6 @@ socket.on("data", (data) => {
 
 socket.on("connect", () => {
 	socket.emit("geometry", term.cols, term.rows);
-	debug(`geometry: ${term.cols}, ${term.rows}`);
 });
 
 socket.on("setTerminalOpts", (data) => {

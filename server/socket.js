@@ -5,13 +5,12 @@
 // socket.js
 
 // private
-const debug = require("debug");
 const SSH = require("ssh2").Client;
 const CIDRMatcher = require("cidr-matcher");
 const validator = require("validator");
 const dnsPromises = require("dns").promises;
 const util = require("util");
-const { sshnakedebug, auditLog, logError } = require("./logging");
+const { auditLog, logError } = require("./logging");
 
 /**
  * parse conn errors
@@ -72,7 +71,6 @@ module.exports = function appSocket(socket) {
 	let login = false;
 
 	socket.once("disconnecting", (reason) => {
-		sshnakedebug(socket, `SOCKET DISCONNECTING: ${reason}`);
 		if (login === true) {
 			auditLog(
 				socket,
@@ -86,7 +84,6 @@ module.exports = function appSocket(socket) {
 		// if websocket connection arrives without an express session, kill it
 		if (!socket.request.session) {
 			socket.emit("401 UNAUTHORIZED");
-			sshnakedebug(socket, "SOCKET: No Express Session / REJECTED");
 			socket.disconnect(true);
 			return;
 		}
@@ -117,10 +114,6 @@ module.exports = function appSocket(socket) {
 		});
 
 		conn.on("ready", () => {
-			sshnakedebug(
-				socket,
-				`CONN READY: LOGIN: user=${socket.request.session.username} from=${socket.handshake.address} host=${socket.request.session.ssh.host} port=${socket.request.session.ssh.port} term=${socket.request.session.ssh.term}`
-			);
 			auditLog(
 				socket,
 				`LOGIN user=${socket.request.session.username} from=${socket.handshake.address} host=${socket.request.session.ssh.host}:${socket.request.session.ssh.port}`
@@ -137,22 +130,16 @@ module.exports = function appSocket(socket) {
 					return;
 				}
 				socket.once("disconnect", (reason) => {
-					sshnakedebug(socket, `CLIENT SOCKET DISCONNECT: ${util.inspect(reason)}`);
 					conn.end();
 					socket.request.session.destroy();
 				});
 				socket.on("error", (errMsg) => {
-					sshnakedebug(socket, `SOCKET ERROR: ${errMsg}`);
 					logError(socket, "SOCKET ERROR", errMsg);
 					conn.end();
 					socket.disconnect(true);
 				});
-				socket.on("control", (controlData) => {
-					sshnakedebug(socket, `SOCKET CONTROL: ${controlData}`);
-				});
 				socket.on("resize", (data) => {
 					stream.setWindow(data.rows, data.cols);
-					sshnakedebug(socket, `SOCKET RESIZE: ${JSON.stringify([data.rows, data.cols])}`);
 				});
 				socket.on("data", (data) => {
 					stream.write(data);
@@ -161,7 +148,6 @@ module.exports = function appSocket(socket) {
 					socket.emit("data", data.toString("utf-8"));
 				});
 				stream.on("close", (code, signal) => {
-					sshnakedebug(socket, `STREAM CLOSE: ${util.inspect([code, signal])}`);
 					if (socket.request.session?.username && login === true) {
 						auditLog(
 							socket,
@@ -182,18 +168,15 @@ module.exports = function appSocket(socket) {
 
 		conn.on("end", (err) => {
 			if (err) logError(socket, "CONN END BY HOST", err);
-			sshnakedebug(socket, "CONN END BY HOST");
 			socket.disconnect(true);
 		});
 		conn.on("close", (err) => {
 			if (err) logError(socket, "CONN CLOSE", err);
-			sshnakedebug(socket, "CONN CLOSE");
 			socket.disconnect(true);
 		});
 		conn.on("error", (err) => connError(socket, err));
 
 		conn.on("keyboard-interactive", (_name, _instructions, _instructionsLang, _prompts, finish) => {
-			sshnakedebug(socket, "CONN keyboard-interactive");
 			finish([socket.request.session.userpassword]);
 		});
 		if (
@@ -206,15 +189,8 @@ module.exports = function appSocket(socket) {
 			ssh.username = socket.request.session.username;
 			ssh.password = socket.request.session.userpassword;
 			ssh.tryKeyboard = true;
-			ssh.debug = debug("ssh2");
 			conn.connect(ssh);
 		} else {
-			sshnakedebug(
-				socket,
-				`CONN CONNECT: Attempt to connect without session.username/password or session varialbles defined, potentially previously abandoned client session. disconnecting websocket client.\r\nHandshake information: \r\n  ${util.inspect(
-					socket.handshake
-				)}`
-			);
 			socket.emit("ssherror", "WEBSOCKET ERROR - Refresh the browser and try again");
 			socket.request.session.destroy();
 			socket.disconnect(true);

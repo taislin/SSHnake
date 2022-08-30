@@ -1,7 +1,6 @@
 /* eslint no-unused-expressions: ["error", { "allowShortCircuit": true, "allowTernary": true }],
    no-console: ["error", { allow: ["warn", "error", "info"] }] */
 const path = require("path");
-const debugSSHnake = require("debug")("SSHnake");
 const util = require("util");
 
 const nodeRoot = path.dirname(require.main.filename);
@@ -70,8 +69,5 @@ const configDefault = {
 if (process.env.LISTEN) configDefault.listen.ip = process.env.LISTEN;
 
 if (process.env.PORT) configDefault.listen.port = process.env.PORT;
-
-// test if config.json exists, if not provide error message but try to run anyway
-debugSSHnake(`\nCurrent config: ${util.inspect(configDefault)}`);
 
 module.exports = configDefault;

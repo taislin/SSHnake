@@ -4,7 +4,6 @@
 // logging.js
 // private
 
-const debug = require("debug");
 const util = require("util");
 
 /**
@@ -14,12 +13,6 @@ const util = require("util");
  */
 function prefix(socket) {
 	return `(${socket.request.sessionID}/${socket.id})`;
-}
-
-// public
-function sshnakedebug(socket, msg) {
-	debug("SSHnake")(`${prefix(socket)} ${msg}`);
-	//console.debug(msg);
 }
 
 /**
@@ -40,9 +33,8 @@ function auditLog(socket, msg) {
  */
 function logError(socket, myFunc, err) {
 	console.error(`SSHnake ${prefix(socket)} ERROR: ${myFunc}: ${err}`);
-	sshnakedebug(socket, `logError: ${myFunc}: ${util.inspect(err)}`);
 	if (!socket.request.session) return;
 	socket.emit("ssherror", `SSH ${myFunc}: ${err}`);
 }
 
-module.exports = { logError, auditLog, sshnakedebug };
+module.exports = { logError, auditLog };
