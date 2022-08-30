@@ -1,7 +1,27 @@
 /* eslint-disable import/no-extraneous-dependencies */
 const path = require("path");
+const TerserPlugin = require("terser-webpack-plugin");
 
 module.exports = {
+	mode: "production",
+	optimization: {
+		minimize: true,
+		minimizer: [
+			new TerserPlugin({
+				terserOptions: {
+					ie8: false,
+					safari10: false,
+
+					compress: {
+						unsafe: true,
+					},
+					mangle: true,
+					keep_fnames: true,
+					keep_classnames: true,
+				},
+			}),
+		],
+	},
 	context: path.resolve("__dirname", "../"),
 	resolve: {
 		extensions: ["", ".webpack.js", ".web.js", ".js"],
