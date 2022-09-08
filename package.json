@@ -38,7 +38,6 @@
     "build": "webpack --progress --config scripts/webpack.common.js --mode=production"
   },
   "devDependencies": {
-    "babel-plugin-import": "^1.13.5",
     "socket.io-client": "^4.5.1",
     "terser-webpack-plugin": "^5.3.5",
     "webpack": "^5.74.0",
